@@ -209,6 +209,14 @@ ENTRY(stext)
 	strcc	r0, [r4], #4
 	bcc	1b
 
+	/* Set __current = &init_task so get_current() returns a valid pointer
+	 * before the first context switch.  ARM with CONFIG_THREAD_INFO_IN_TASK
+	 * uses the __current global (updated by set_current in __switch_to).
+	 * BSS clear above zeroed it; fill it in now. */
+	ldr	r4, =__current
+	ldr	r5, =init_task
+	str	r5, [r4]
+
 	/* Initialize the bottom-screen framebuffer so DEBUG_LL printascii
 	 * output is visible from the very first printk in start_kernel.
 	 * BSS is clear and the stack is live, so calling C is safe here.
