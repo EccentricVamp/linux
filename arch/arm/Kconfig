@@ -320,7 +320,7 @@ config MMU
 	  support by paged memory management. If unsure, say 'Y'.
 
 config ARM_SINGLE_ARMV7M
-	def_bool !MMU
+	def_bool !MMU && !ARCH_DSI
 	select ARM_NVIC
 	select CPU_V7M
 	select NO_IOPORT_MAP
@@ -464,6 +464,7 @@ source "arch/arm/mach-versatile/Kconfig"
 source "arch/arm/mach-vt8500/Kconfig"
 
 source "arch/arm/mach-zynq/Kconfig"
+source "arch/arm/mach-dsi/Kconfig"
 
 # ARMv7-M architecture
 config ARCH_LPC18XX

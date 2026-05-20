@@ -84,7 +84,11 @@ obj-$(CONFIG_VDSO)		+= vdso.o
 obj-$(CONFIG_EFI)		+= efi.o
 obj-$(CONFIG_PARAVIRT)	+= paravirt.o
 
+ifdef CONFIG_ARCH_DSI
+obj-y			+= head-dsi.o
+else
 obj-y			+= head$(MMUEXT).o
+endif
 obj-$(CONFIG_DEBUG_LL)	+= debug.o
 obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o
 obj-$(CONFIG_ARM_PATCH_PHYS_VIRT)	+= phys2virt.o
