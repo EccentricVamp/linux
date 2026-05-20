@@ -1405,6 +1405,13 @@ choice
 		  options; the platform specific options are deprecated
 		  and will be soon removed.
 
+	config DEBUG_LL_NTR_NOCASH
+		depends on ARCH_DSI
+		bool "Kernel low-level debugging via no$gba debug port"
+		help
+		  Say Y here if you wish the debug print routes to direct
+		  their output to the no$gba emulator debug port.
+
 endchoice
 
 config DEBUG_AT91_UART
@@ -1509,6 +1516,7 @@ config DEBUG_LL_INCLUDE
 				 DEBUG_IMX6UL_UART || \
 				 DEBUG_IMX7D_UART
 	default "debug/msm.S" if DEBUG_QCOM_UARTDM
+	default "debug/nocash.S" if DEBUG_LL_NTR_NOCASH
 	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
 	default "debug/renesas-scif.S" if DEBUG_R7S72100_SCIF2
 	default "debug/renesas-scif.S" if DEBUG_R7S9210_SCIF2
@@ -1558,6 +1566,7 @@ config DEBUG_UART_PHYS
 	default 0x02530c00 if DEBUG_KEYSTONE_UART0
 	default 0x02531000 if DEBUG_KEYSTONE_UART1
 	default 0x03010fe0 if ARCH_RPC
+	default 0x04fffa1c if DEBUG_LL_NTR_NOCASH
 	default 0x07000000 if DEBUG_SUN9I_UART0
 	default 0x09530000 if DEBUG_STIH418_SBC_ASC0
 	default 0x10009000 if DEBUG_REALVIEW_STD_PORT || \
@@ -1661,8 +1670,8 @@ config DEBUG_UART_PHYS
 	default 0xfffe8600 if DEBUG_BCM63XX_UART
 	default 0xffffee00 if DEBUG_AT91_SAM9263_DBGU
 	default 0xfffff200 if DEBUG_AT91_RM9200_DBGU
-	depends on ARCH_EP93XX || \
-	        DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
+	depends on ARCH_EP93XX || DEBUG_LL_NTR_NOCASH || \
+	    DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
 		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_MESON_UARTAO || \
 		DEBUG_QCOM_UARTDM || DEBUG_R7S72100_SCIF2 || \
 		DEBUG_R7S9210_SCIF2 || DEBUG_R7S9210_SCIF4 || \

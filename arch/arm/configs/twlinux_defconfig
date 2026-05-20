@@ -46,6 +46,15 @@ CONFIG_DEBUG_KERNEL=y
 CONFIG_DEBUG_LL=y
 CONFIG_DEBUG_DSI_EARLYFB=y
 
+# --- Early console over the no$gba/melonDS debug port ----------------------
+# 0x04FFFA1C: write a byte → emulator logs the character. Boot with
+# earlycon=ntr_nocash on the kernel command line (set in nintendo-dsi.dts).
+CONFIG_TTY=y
+CONFIG_SERIAL_CORE=y
+CONFIG_SERIAL_CORE_CONSOLE=y
+CONFIG_SERIAL_EARLYCON=y
+CONFIG_SERIAL_EARLYCON_NTR_NOCASH=y
+
 # Single-core scheduler — ARM7 is a co-processor, not a Linux CPU.
 # CONFIG_SMP is not set
 CONFIG_HZ_100=y

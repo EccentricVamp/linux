@@ -15,7 +15,7 @@
 	#size-cells = <1>;
 
 	chosen {
-		bootargs = "console=ttyS0 earlyprintk debug";
+		bootargs = "console=ttyS0 earlyprintk debug earlycon=ntr_nocash keep_bootcon";
 		// stdout-path will point at the framebuffer console once that
 		// driver lands. Until then, panics need the JTAG/debug header
 		// or melonDS's debug log.
