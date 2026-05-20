@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Drops into arch/arm/mach-dsi/Kconfig.
+
+menuconfig ARCH_DSI
+	bool "Nintendo DSi"
+	depends on !MMU
+	select CPU_ARM946E
+	select CPU_32v5
+	help
+	  Support for the Nintendo DSi handheld console.
+
+	  The DSi has an ARM946E-S running at 133 MHz with 16 MB of main
+	  RAM in DSi mode. Linux runs only on the ARM9; the ARM7TDMI
+	  remains a co-processor for input, audio, and wireless.
+
+	  This port targets DSi mode only. Booting requires an Unlaunch-
+	  capable console (or a signed loader) and a small NDS-format
+	  shim that loads the kernel into RAM and jumps to its entry.
+
+if ARCH_DSI
+
+config MACH_NINTENDO_DSI
+	bool "Nintendo DSi (TWL/CTR family)"
+	default y
+	help
+	  Default DSi machine. There is currently only one variant.
+
+endif

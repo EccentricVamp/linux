@@ -1,0 +1,84 @@
+// SPDX-License-Identifier: GPL-2.0
+//
+// Device tree for the Nintendo DSi (DSi mode, 16 MB main RAM).
+//
+// All compatible strings under "nintendo,*" are placeholders awaiting kernel
+// drivers. Nothing here is upstream yet; expect every node to need work.
+
+/dts-v1/;
+
+/ {
+	model = "Nintendo DSi";
+	compatible = "nintendo,dsi";
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	chosen {
+		bootargs = "console=ttyS0 earlyprintk debug";
+		// stdout-path will point at the framebuffer console once that
+		// driver lands. Until then, panics need the JTAG/debug header
+		// or melonDS's debug log.
+	};
+
+	memory@2000000 {
+		device_type = "memory";
+		// DSi mode: 16 MB main RAM at 0x02000000.
+		reg = <0x02000000 0x01000000>;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,arm946e-s";
+			reg = <0>;
+			clock-frequency = <133000000>;
+		};
+		// ARM7TDMI exists but is not a Linux CPU — it is a co-processor.
+	};
+
+	soc {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		intc: interrupt-controller@4000210 {
+			compatible = "nintendo,dsi-intc";
+			reg = <0x04000210 0x10>,    // IE/IF/IME (NDS-style)
+			      <0x04004010 0x10>;    // DSi auxiliary IRQs
+			interrupt-controller;
+			#interrupt-cells = <1>;
+			status = "disabled";        // driver TBD
+		};
+
+		ipc7: mailbox@4000180 {
+			compatible = "nintendo,dsi-ipc";
+			reg = <0x04000180 0x10>;
+			#mbox-cells = <1>;
+			status = "disabled";
+		};
+
+		fb_main: framebuffer@4000000 {
+			compatible = "nintendo,dsi-lcd";
+			reg = <0x04000000 0x100>;
+			status = "disabled";
+		};
+
+		touchscreen {
+			compatible = "nintendo,dsi-ts-arm7";
+			mboxes = <&ipc7 0>;
+			status = "disabled";
+		};
+
+		mmc@4004500 {
+			// DSi-only TMIO-style SD host.
+			compatible = "nintendo,dsi-tmio";
+			reg = <0x04004500 0x200>;
+			status = "disabled";
+		};
+	};
+};
