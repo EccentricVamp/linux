@@ -15,15 +15,11 @@
 	#size-cells = <1>;
 
 	chosen {
-		bootargs = "console=ttyS0 earlyprintk debug earlycon=ntr_nocash keep_bootcon lpj=1000000";
+		bootargs = "console=ttyS0 earlyprintk debug earlycon=ntr_nocash keep_bootcon lpj=1000000 rdinit=/sbin/init";
 		// stdout-path will point at the framebuffer console once that
 		// driver lands. Until then, panics need the JTAG/debug header
 		// or melonDS's debug log.
-		//
-		// Initramfs window: bootloader loads rootfs.cpio to 0x02E00000.
-		// The 1 MB reservation is generous; actual rootfs is ~8 KB.
-		linux,initrd-start = <0x02e00000>;
-		linux,initrd-end   = <0x02f00000>;
+		// Initramfs is embedded in the kernel Image via CONFIG_INITRAMFS_SOURCE.
 	};
 
 	memory@2000000 {
