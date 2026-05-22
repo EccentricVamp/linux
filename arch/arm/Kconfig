@@ -320,9 +320,9 @@ config MMU
 	  support by paged memory management. If unsure, say 'Y'.
 
 config ARM_SINGLE_ARMV7M
-	def_bool !MMU && !ARCH_DSI
+	bool
+	depends on !MMU && CPU_V7M
 	select ARM_NVIC
-	select CPU_V7M
 	select NO_IOPORT_MAP
 
 config ARCH_MMAP_RND_BITS_MIN
@@ -378,6 +378,8 @@ source "arch/arm/mach-davinci/Kconfig"
 source "arch/arm/mach-digicolor/Kconfig"
 
 source "arch/arm/mach-dove/Kconfig"
+
+source "arch/arm/mach-twl/Kconfig"
 
 source "arch/arm/mach-ep93xx/Kconfig"
 
@@ -464,12 +466,13 @@ source "arch/arm/mach-versatile/Kconfig"
 source "arch/arm/mach-vt8500/Kconfig"
 
 source "arch/arm/mach-zynq/Kconfig"
-source "arch/arm/mach-dsi/Kconfig"
 
 # ARMv7-M architecture
 config ARCH_LPC18XX
 	bool "NXP LPC18xx/LPC43xx"
-	depends on ARM_SINGLE_ARMV7M
+	depends on !MMU
+	select ARM_SINGLE_ARMV7M
+	select CPU_V7M
 	select ARCH_HAS_RESET_CONTROLLER
 	select ARM_AMBA
 	select CLKSRC_LPC32XX
@@ -480,7 +483,9 @@ config ARCH_LPC18XX
 
 config ARCH_MPS2
 	bool "ARM MPS2 platform"
-	depends on ARM_SINGLE_ARMV7M
+	depends on !MMU
+	select ARM_SINGLE_ARMV7M
+	select CPU_V7M
 	select ARM_AMBA
 	select CLKSRC_MPS2
 	help

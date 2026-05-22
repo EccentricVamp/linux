@@ -54,6 +54,61 @@ ENTRY(stext)
 	@ ensure svc mode and all interrupts masked
 	safe_svcmode_maskall r9
 						@ and irqs disabled
+
+#ifdef CONFIG_CPU_ARM946E
+	/*
+	 * ARM946E-S early setup: map DTCM/ITCM and copy exception vectors.
+	 *
+	 * This must run before __lookup_processor_type so that ITCM is live
+	 * before the SCTLR is written with ITCM=1, V=0 (see label 1: below).
+	 * V=1 in the initial SCTLR reset means any early exception routes to
+	 * ROM at 0xFFFF0000, so it is safe to write vectors to 0x00000000
+	 * before switching V to 0.
+	 */
+	mov	r10, r2				@ save DTB pointer
+
+	/* Reset SCTLR: caches/MPU off, V=1 (high vectors), ARMv5 defaults. */
+	ldr	r1, =(CR_V | CR_L | CR_D | CR_P | CR_W)
+	mcr	p15, 0, r1, c1, c0, 0
+
+	/* Flush I/D caches and drain write buffer. */
+	mov	r0, #0
+	mcr	p15, 0, r0, c7, c5, 0		@ I-cache invalidate all
+	mcr	p15, 0, r0, c7, c6, 0		@ D-cache invalidate all
+	mcr	p15, 0, r0, c7, c10, 4		@ drain write buffer
+
+	/* Map DTCM at 0x027C0000, 16 KiB (cp15 c9 c1, op2=0). */
+	ldr	r0, =(0x027C0000 | (5 << 1) | 1)
+	mcr	p15, 0, r0, c9, c1, 0
+
+	/* Map ITCM at 0x00000000, 32 KiB (cp15 c9 c1, op2=1). */
+	ldr	r0, =((6 << 1) | 1)
+	mcr	p15, 0, r0, c9, c1, 1
+
+	/* Copy exception vectors to ITCM (0x00000000 / 0x00001000).
+	 * Stores to the ITCM address range reach TCM as soon as it is mapped
+	 * above.  early_trap_init() repeats this later; the early copy covers
+	 * any exception between enabling ITCM (below) and early_trap_init(). */
+	ldr	r0, =__vectors_start
+	ldr	r1, =__vectors_end
+	mov	r2, #0x00000000
+1001:	cmp	r0, r1
+	ldrcc	r3, [r0], #4
+	strcc	r3, [r2], #4
+	bcc	1001b
+
+	ldr	r0, =__stubs_start
+	ldr	r1, =__stubs_end
+	mov	r2, #0x00001000
+1002:	cmp	r0, r1
+	ldrcc	r3, [r0], #4
+	strcc	r3, [r2], #4
+	bcc	1002b
+
+	/* Restore DTB pointer (r2 was used as copy destination). */
+	mov	r2, r10
+#endif /* CONFIG_CPU_ARM946E */
+
 #if defined(CONFIG_CPU_CP15)
 	mrc	p15, 0, r9, c0, c0		@ get processor id
 #elif defined(CONFIG_CPU_V7M)
@@ -74,7 +129,16 @@ ENTRY(stext)
 	ldr	r12, [r10, #PROCINFO_INITFUNC]
 	add	r12, r12, r10
 	ret	r12
-1:	ldr	lr, =__mmap_switched
+1:
+#ifdef CONFIG_CPU_ARM946E
+	/* __arm946_setup returned SCTLR value in r0 with M|C|I set.
+	 * OR in DTCM+ITCM enable bits; clear V so vectors are at 0x00000000
+	 * (ITCM) rather than 0xFFFF0000.  __after_proc_init writes this. */
+	ldr	r1, =((1 << 16) | (1 << 18))	@ SCTLR DTCM | ITCM
+	orr	r0, r0, r1
+	bic	r0, r0, #CR_V
+#endif
+	ldr	lr, =__mmap_switched
 	b	__after_proc_init
 ENDPROC(stext)
 

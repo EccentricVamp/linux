@@ -1,1 +1,1 @@
-dtb-$(CONFIG_ARCH_DSI) += nintendo-dsi.dtb
+dtb-$(CONFIG_ARCH_TWL) += nintendo-twl.dtb

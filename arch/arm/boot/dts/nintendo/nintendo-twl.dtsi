@@ -1,0 +1,67 @@
+// SPDX-License-Identifier: GPL-2.0
+//
+// nintendo-twl.dtsi — SoC-level template for the Nintendo TWL (DSi) SoC.
+//
+// Peripheral nodes are stubs (status = "disabled") awaiting kernel drivers.
+// Compatible strings use the nintendo,twl-* prefix (Nintendo's internal
+// codename for the DSi platform).
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,arm946e-s";
+			reg = <0>;
+			clock-frequency = <133000000>;
+		};
+		// ARM7TDMI co-processor — not a Linux CPU, not represented here.
+	};
+
+	soc {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		intc: interrupt-controller@4000210 {
+			compatible = "nintendo,twl-intc";
+			reg = <0x04000210 0x10>,	// IE/IF/IME (NDS-style)
+			      <0x04004010 0x10>;	// DSi auxiliary IRQs
+			interrupt-controller;
+			#interrupt-cells = <1>;
+			status = "disabled";		// driver TBD
+		};
+
+		ipc7: mailbox@4000180 {
+			compatible = "nintendo,twl-ipc";
+			reg = <0x04000180 0x10>;
+			#mbox-cells = <1>;
+			status = "disabled";
+		};
+
+		fb_main: framebuffer@4000000 {
+			compatible = "nintendo,twl-lcd";
+			reg = <0x04000000 0x100>;
+			status = "disabled";
+		};
+
+		touchscreen {
+			compatible = "nintendo,twl-ts-arm7";
+			mboxes = <&ipc7 0>;
+			status = "disabled";
+		};
+
+		mmc@4004500 {
+			// DSi-only TMIO-compatible SD host.
+			compatible = "nintendo,twl-tmio";
+			reg = <0x04004500 0x200>;
+			status = "disabled";
+		};
+	};
+};
