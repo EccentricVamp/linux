@@ -741,4 +741,12 @@ config SUNPLUS_SP7021_INTC
 	  chained controller, routing all interrupt source in P-Chip to
 	  the primary controller on C-Chip.
 
+config TWL_INTC
+	bool "Nintendo TWL (DSi) interrupt controller"
+	depends on ARCH_TWL || COMPILE_TEST
+	select IRQ_DOMAIN
+	help
+	  Support for the Nintendo DSi (TWL) ARM9 interrupt controller.
+	  Single 32-bit IE/IF register pair at 0x04000210/214.
+
 endmenu

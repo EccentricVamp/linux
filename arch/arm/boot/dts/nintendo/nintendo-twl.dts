@@ -17,10 +17,7 @@
 	};
 
 	chosen {
-		// lpj=1000000: temporary workaround for missing clocksource.
-		// Remove once a nintendo,twl-intc IRQ driver and matching
-		// clocksource driver are in place.
-		bootargs = "console=ttyS0 earlyprintk debug earlycon=ntr_nocash keep_bootcon lpj=1000000 rdinit=/sbin/init";
+		bootargs = "console=ttyS0 earlyprintk debug earlycon=ntr_nocash keep_bootcon rdinit=/sbin/init";
 		// stdout-path will point at the framebuffer console once that
 		// driver lands.  Until then, output goes to the melonDS debug log.
 		// Initramfs is embedded in the kernel Image via CONFIG_INITRAMFS_SOURCE.

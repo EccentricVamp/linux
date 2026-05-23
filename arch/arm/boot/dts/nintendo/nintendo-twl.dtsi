@@ -29,13 +29,20 @@
 		#size-cells = <1>;
 		ranges;
 
-		intc: interrupt-controller@4000210 {
+		intc: interrupt-controller@4000208 {
 			compatible = "nintendo,twl-intc";
-			reg = <0x04000210 0x10>,	// IE/IF/IME (NDS-style)
-			      <0x04004010 0x10>;	// DSi auxiliary IRQs
+			// IME @+0x00, IE @+0x08, IF @+0x0C
+			reg = <0x04000208 0x10>;
 			interrupt-controller;
 			#interrupt-cells = <1>;
-			status = "disabled";		// driver TBD
+		};
+
+		timer@4000100 {
+			compatible = "nintendo,twl-timer";
+			reg = <0x04000100 0x10>;
+			interrupt-parent = <&intc>;
+			interrupts = <5>;		/* Timer 2 overflow */
+			clock-frequency = <33513982>;
 		};
 
 		ipc7: mailbox@4000180 {

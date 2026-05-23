@@ -6,6 +6,8 @@ menuconfig ARCH_TWL
 	bool "Nintendo DSi"
 	depends on !MMU
 	select CPU_ARM946E
+	select TWL_INTC
+	select TWL_TIMER
 	help
 	  Support for the Nintendo DSi handheld console.
 
