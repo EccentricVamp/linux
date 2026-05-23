@@ -52,10 +52,13 @@
 			status = "disabled";
 		};
 
-		fb_main: framebuffer@4000000 {
-			compatible = "nintendo,twl-lcd";
-			reg = <0x04000000 0x100>;
-			status = "disabled";
+		fb_sub: framebuffer@4001000 {
+			compatible = "nintendo,twl-fb";
+			reg = <0x04001000 0x60>,	/* sub-engine display regs */
+			      <0x04000242 0x1>,		/* VRAMCNT_C               */
+			      <0x06200000 0x20000>;	/* VRAM bank C (128 KB)    */
+			reg-names = "disp", "vramcnt", "vram";
+			status = "okay";
 		};
 
 		touchscreen {

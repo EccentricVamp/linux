@@ -2,7 +2,6 @@
 #ifndef __ASM_MACH_TWL_EARLYFB_H
 #define __ASM_MACH_TWL_EARLYFB_H
 
-void twl_early_fb_init(void);
-void twl_early_putc(int c);
+#include <linux/twl-earlyfb.h>
 
 #endif /* __ASM_MACH_TWL_EARLYFB_H */

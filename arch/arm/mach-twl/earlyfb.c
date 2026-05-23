@@ -9,8 +9,9 @@
 // the very first printk in start_kernel.
 //
 // Public API (declared in twl-earlyfb.h):
-//   void twl_early_fb_init(void)   - called once from head-dsi.S
-//   void twl_early_putc(int c)     - called per-char from debug/twl.S
+//   void twl_early_fb_init(void)       - called once from .init_early
+//   void twl_early_putc(int c)         - called per-char from debug/twl.S
+//   void twl_early_fb_shutdown(void)   - called by twl-fb when fbcon takes over
 
 #include "twl-earlyfb.h"
 #include <linux/io.h>
@@ -257,4 +258,9 @@ void twl_early_fb_init(void)
 	twl_col = 0;
 	twl_row = 0;
 	twl_fb_ready = true;
+}
+
+void twl_early_fb_shutdown(void)
+{
+	twl_fb_ready = false;
 }

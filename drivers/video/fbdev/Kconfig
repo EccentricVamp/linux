@@ -1773,6 +1773,16 @@ config FB_HYPERV
 	help
 	  This framebuffer driver supports Microsoft Hyper-V Synthetic Video.
 
+config FB_TWL
+	tristate "Nintendo DSi (TWL) framebuffer support"
+	depends on FB && (ARCH_TWL || COMPILE_TEST)
+	select FB_IOMEM_HELPERS
+	help
+	  Framebuffer driver for the Nintendo DSi sub-engine LCD
+	  (256x192, 16bpp BGR555).  Backed by VRAM bank C at 0x06200000.
+
+	  Enables fbcon to render a console on the bottom screen.
+
 config FB_SIMPLE
 	tristate "Simple framebuffer support"
 	depends on FB
